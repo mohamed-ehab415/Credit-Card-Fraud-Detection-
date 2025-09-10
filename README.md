@@ -1,6 +1,6 @@
 # Credit Card Fraud Detection
 <p align="center">
-  <img src="assets/4.png" alt="" width="400"/>
+  <img src="assets/4.png" alt="" width="600"/>
 </p>
 
 ## Problem Definition
