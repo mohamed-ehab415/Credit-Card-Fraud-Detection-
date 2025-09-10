@@ -1,103 +1,125 @@
 # Credit Card Fraud Detection
+
 <p align="center">
-  <img src="assets/4.png" alt="" width="600"/>
+  <img src="assets/4.png" alt="Project Banner" width="600"/>
 </p>
+
+Detect fraudulent credit card transactions using machine learning.  
+Designed for developers and data scientists interested in advanced fraud detection workflows.
+
+---
+
+## Table of Contents
+
+- [Problem Definition](#problem-definition)
+- [Dataset](#dataset)
+- [Data Analysis](#data-analysis)
+- [Preprocessing](#preprocessing)
+- [Modeling](#modeling)
+- [Evaluation](#evaluation)
+- [Best Model](#best-model)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
+
+---
 
 ## Problem Definition
 
-Credit card fraud detection is a major concern for financial institutions worldwide, as fraudulent transactions can cause significant financial losses and damage customer trust. The goal of this project is to develop a machine learning model that can accurately distinguish between legitimate and fraudulent credit card transactions. Given the highly imbalanced nature of the dataset, this project prioritizes techniques that effectively identify rare fraudulent transactions without compromising the accuracy of detecting legitimate transactions.
+Financial institutions face significant risks from credit card fraud.  
+The goal: **build a machine learning model to accurately detect fraudulent transactions**—even with highly imbalanced data.
+
+---
 
 ## Dataset
 
-This project uses the Credit Card Fraud Detection Dataset, a labeled dataset commonly used to train and evaluate machine learning models for detecting fraudulent credit card transactions. Each transaction is represented as a data point with several anonymized features, enabling detailed analysis and model training without revealing sensitive customer information.
+- **Source:** [Kaggle Credit Card Fraud Detection Dataset](https://www.kaggle.com/mlg-ulb/creditcardfraud)
+- **Features:**
+  - `Time`: Seconds since first transaction in the dataset
+  - `V1`–`V28`: PCA-transformed anonymized features
+  - `Amount`: Transaction amount
+  - `Class`: Target (0 = legitimate, 1 = fraudulent)
 
-**Dataset Composition**
-- **Time**: Seconds elapsed between the first transaction in the dataset and the current transaction.
-- **V1 to V28 (Anonymized Features)**: Result of Principal Component Analysis (PCA) transformation to protect user privacy. Capture transaction patterns, behavior, and anomalies.
-- **Amount**: Monetary value of the transaction. Useful for predicting fraud based on amount ranges or patterns.
-- **Class (Target Variable)**: Binary indicator (fraudulent `1`, legitimate `0`). Highly imbalanced, with the majority of transactions being legitimate.
+---
 
 ## Data Analysis
 
-- **Target**: The dataset is heavily imbalanced; class `0` (legitimate) is the majority, and class `1` (fraudulent) is the minority.
-<p align="center">
-  <img src="assets/1.png" alt="Imbalanced Dataset" width="400"/>
-</p>
+- **Imbalanced Target:**  
+  <p align="center">
+    <img src="assets/1.png" alt="Imbalanced Dataset" width="400"/>
+  </p>
+- **Feature Correlations:**  
+  <p align="center">
+    <img src="assets/2.png" alt="Feature Correlations" width="400"/>
+  </p>
 
-- **Correlation**: Analysis was performed to explore correlations between features and the target variable.
-<p align="center">
-  <img src="assets/2.png" alt="Correlation" width="400"/>
-</p>
-## Data Preprocessing
+---
 
-- **Data Scaling**: Standardized features using `StandardScaler` to ensure mean zero and unit variance, improving model convergence.
-- **Data Resampling**: Addressed class imbalance using:
-  - **Random Undersampling**: Reduced non-fraudulent transactions for a balanced dataset.
-  - **SMOTE Oversampling**: Synthesized fraudulent samples to enhance detection.
-  - **Combined Approach**: Used both undersampling and SMOTE for optimal balance.
+## Preprocessing
 
-## Models
+- **Scaling:**  
+  - All features standardized (`StandardScaler`)
+- **Resampling:**  
+  - **Random Undersampling**: Balances by reducing majority class
+  - **SMOTE Oversampling**: Synthesizes minority class samples
+  - **Combined**: Undersample majority, then SMOTE minority
 
-Several machine learning models were trained and evaluated to determine the best-performing model for fraud detection, focusing on handling imbalanced data and achieving high F1 scores.
+---
 
-### Models Used
+## Modeling
 
-1. **Logistic Regression**
-   - Linear, efficient baseline; works well with imbalanced datasets.
-2. **Random Forest Classifier**
-   - Ensemble of decision trees; robust to overfitting and captures complex interactions.
-3. **MLP (Multi-Layer Perceptron) Classifier**
-   - Neural network for high-dimensional problems; requires careful tuning to avoid overfitting.
-4. **Voting Classifier**
-   - Combines predictions from multiple models using majority voting for improved performance.
-5. **XGBoost**
-   - Gradient boosting algorithm; effective for structured data and imbalanced problems.
+The following models were implemented, tuned, and evaluated:
+
+### Models
+
+- **Logistic Regression** (baseline, efficient, handles imbalance)
+- **Random Forest** (ensemble, robust, captures feature interactions)
+- **MLP Classifier** (neural network for complex patterns)
+- **Voting Classifier** (ensemble for improved performance)
+- **XGBoost** (gradient boosting for structured data)
 
 ### Hyperparameter Tuning
 
-Performed using `RandomizedSearchCV` for efficiency, optimizing each model’s parameters:
+Used `RandomizedSearchCV` for all models.
 
-- **Logistic Regression**: `C`, `max_iter`, `solver`, `penalty`, `l1_ratio`, `class_weight`
-- **Random Forest**: `n_estimators`, `max_depth`, `min_samples_split`, `min_samples_leaf`, `class_weight`
-- **MLP Classifier**: `hidden_layer_sizes`, `activation`, `alpha`, `solver`, `max_iter`
-- **XGBoost**: `subsample`, `n_estimators`, `max_depth`, `learning_rate`, `colsample_bytree`
-- **Voting Classifier**: Ensemble weights
+#### Best Hyperparameters
 
-#### Best Hyperparameters Summary
+<details>
+<summary>Expand for details</summary>
 
-- **Random Forest**:  
-  - `n_estimators`: 100  
-  - `min_samples_split`: 2  
-  - `min_samples_leaf`: 1  
+- **Random Forest**
+  - `n_estimators`: 100
+  - `min_samples_split`: 2
+  - `min_samples_leaf`: 1
   - `class_weight`: {0: 1, 1: 0.1}
-
-- **MLP Classifier**:  
-  - `solver`: 'adam'  
-  - `max_iter`: 150  
-  - `hidden_layer_sizes`: (150,)  
-  - `alpha`: 0.0001  
+- **MLP Classifier**
+  - `solver`: 'adam'
+  - `max_iter`: 150
+  - `hidden_layer_sizes`: (150,)
+  - `alpha`: 0.0001
   - `activation`: 'relu'
-
-- **Logistic Regression**:  
-  - `solver`: 'saga'  
-  - `penalty`: 'elasticnet'  
-  - `l1_ratio`: 0.9  
-  - `class_weight`: {0: 1, 1: 0.2}  
+- **Logistic Regression**
+  - `solver`: 'saga'
+  - `penalty`: 'elasticnet'
+  - `l1_ratio`: 0.9
+  - `class_weight`: {0: 1, 1: 0.2}
   - `C`: 10
-
-- **XGBoost**:  
-  - `subsample`: 0.9  
-  - `n_estimators`: 150  
-  - `max_depth`: 6  
-  - `learning_rate`: 0.2  
+- **XGBoost**
+  - `subsample`: 0.9
+  - `n_estimators`: 150
+  - `max_depth`: 6
+  - `learning_rate`: 0.2
   - `colsample_bytree`: 0.9
-
-- **Voting Classifier**:  
+- **Voting Classifier**
   - `weights`: [1, 3, 1]
+</details>
+
+---
 
 ## Evaluation
-
-Performance metrics focus on F1 Score and the Precision-Recall Area Under the Curve (PR AUC), using both training and validation datasets.
 
 | Model                | Training F1 | Training PR AUC | Validation F1 | Validation PR AUC |
 |----------------------|-------------|-----------------|---------------|-------------------|
@@ -107,20 +129,80 @@ Performance metrics focus on F1 Score and the Precision-Recall Area Under the Cu
 | Voting Classifier    | 0.9578      | 0.9613          | 0.8757        | 0.8796            |
 | XGBoost              |     —       |      —           | 0.8554        | 0.8617            |
 
-- **Notes**: Random Forest and Voting Classifier demonstrate strong performance, though Random Forest shows some overfitting. MLP excels in training but generalizes poorly. Logistic Regression generalizes better.
-
-## Best Model and Testing
-
-- The **Voting Classifier** proved to be the best performing model.
-- **Testing Results**:
-  - F1 Score: **0.8528**
-  - PR AUC: **0.8531**
-
-## Conclusion
-
-This project presents a robust approach to credit card fraud detection using a combination of data preprocessing techniques and advanced machine learning models, with thorough hyperparameter tuning and evaluation. The Voting Classifier, leveraging the strengths of multiple models, achieved the best balance between precision and recall for identifying fraudulent transactions.
+- **Voting Classifier** is the best performer (see [Best Model](#best-model) below).
 
 ---
 
-> **Author:** Mohamed Ehab  
-> **Repository:** [Credit-Card-Fraud-Detection-](https://github.com/mohamed-ehab415/Credit-Card-Fraud-Detection-)
+## Best Model
+
+- **Voting Classifier**
+  - **Test Results:**
+    - F1 Score: `0.8528`
+    - PR AUC: `0.8531`
+
+---
+
+## Quick Start
+
+```bash
+# Clone the repo
+git clone https://github.com/mohamed-ehab415/Credit-Card-Fraud-Detection-.git
+cd Credit-Card-Fraud-Detection-
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run main analysis (update with your main script name)
+python main.py
+```
+
+---
+
+## Installation
+
+> **Python 3.8+ required**
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Usage
+
+1. **Download the dataset** from Kaggle and place it in the `data/` directory.
+2. **Set up your parameters** in `config.py` (if available).
+3. **Run analysis or training:**
+   ```bash
+   python main.py
+   ```
+
+---
+
+## Contributing
+
+Pull requests, issues, and suggestions are welcome!  
+- Fork the repository
+- Create a feature branch (`git checkout -b feature/my-feature`)
+- Commit your changes
+- Open a pull request
+
+---
+
+## License
+
+This project is for educational and research use.  
+See `LICENSE` for details.
+
+---
+
+## Author
+
+**Mohamed Ehab**  
+[GitHub](https://github.com/mohamed-ehab415)
+
+---
+
+<p align="center">
+  <img src="assets/4.png" alt="Logo" width="120"/>
+</p>
